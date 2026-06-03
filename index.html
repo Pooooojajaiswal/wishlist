@@ -238,17 +238,17 @@
       animation: fadeUp 0.6s ease-out 0.1s both;
     }
     .stat-pill {
-      background: rgba(255,255,255,0.22);
-      backdrop-filter: blur(8px);
-      border: 1px solid rgba(255,255,255,0.38);
+      background: rgba(255,255,255,0.95);
+      backdrop-filter: blur(6px);
+      border: 1px solid rgba(30,60,80,0.06);
       border-radius: 30px;
       padding: 0.35rem 0.9rem;
       display: flex;
       align-items: center;
       gap: 0.35rem;
       font-size: 0.76rem;
-      font-weight: 500;
-      color: #fff;
+      font-weight: 600;
+      color: var(--text-dark);
       transition: transform 0.2s, background 0.2s;
     }
     .stat-pill i { font-size: 14px; opacity: 0.9; }
@@ -256,11 +256,12 @@
 
     /* ─── GLASS CARD ────────────────────────────────── */
     .glass {
-      background: rgba(255,255,255,0.68);
+      background: rgba(255,255,255,0.78);
       backdrop-filter: blur(14px);
       -webkit-backdrop-filter: blur(14px);
-      border: 1px solid rgba(255,255,255,0.88);
+      border: 1px solid rgba(255,255,255,0.9);
       border-radius: 20px;
+      color: var(--text-dark);
     }
 
     /* ─── ADD FORM ──────────────────────────────────── */
@@ -307,7 +308,7 @@
       box-shadow: 0 0 0 3px rgba(46,143,191,0.15);
       background: rgba(255,255,255,0.9);
     }
-    .form-input::placeholder { color: var(--text-muted); }
+    .form-input::placeholder { color: rgba(60,90,110,0.52); }
     .form-select { padding-right: 2rem; cursor: pointer; appearance: none;
       background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%236a9aaa' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
       background-repeat: no-repeat;
@@ -345,8 +346,8 @@
       animation: fadeUp 0.6s ease-out 0.2s both;
     }
     .fbtn {
-      background: rgba(255,255,255,0.5);
-      border: 1px solid rgba(255,255,255,0.75);
+      background: rgba(255,255,255,0.95);
+      border: 1px solid rgba(30,60,80,0.06);
       border-radius: 20px;
       padding: 0.3rem 0.8rem;
       font-family: 'DM Sans', sans-serif;
@@ -374,7 +375,7 @@
       font-weight: 500;
       text-transform: uppercase;
       letter-spacing: 0.1em;
-      color: rgba(255,255,255,0.75);
+      color: var(--text-mid);
       margin: 1rem 0 0.5rem 0.2rem;
       display: flex;
       align-items: center;
@@ -384,7 +385,7 @@
       content: '';
       flex: 1;
       height: 1px;
-      background: rgba(255,255,255,0.3);
+      background: rgba(30,60,80,0.08);
     }
 
     .items-list { display: flex; flex-direction: column; gap: 0.55rem; }
@@ -398,7 +399,7 @@
       animation: slideIn 0.25s ease-out;
       cursor: default;
     }
-    .item:hover { transform: translateY(-2px); background: rgba(255,255,255,0.8); }
+    .item:hover { transform: translateY(-2px); background: rgba(255,255,255,0.95); }
     .item.completed { opacity: 0.55; }
     .item.completed .item-name { text-decoration: line-through; color: var(--text-muted); }
 
@@ -454,7 +455,7 @@
     .cat-beach     { background: #cce5ff; color: #0a3a7a; }
     .pri-label {
       font-size: 0.67rem;
-      color: var(--text-muted);
+      color: var(--text-mid);
       font-weight: 400;
     }
 
@@ -475,7 +476,7 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      color: var(--text-muted);
+      color: var(--text-mid);
       font-size: 16px;
       transition: all 0.15s;
     }
@@ -677,8 +678,12 @@
   ];
 
   function load() {
-    try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || defaults; }
-    catch { return defaults; }
+    try {
+      const data = JSON.parse(localStorage.getItem(STORAGE_KEY));
+      return Array.isArray(data) ? data : [];
+    } catch {
+      return [];
+    }
   }
   function save() { localStorage.setItem(STORAGE_KEY, JSON.stringify(items)); }
 
