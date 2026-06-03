@@ -1,0 +1,841 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Travel Bucket List ✈</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css" />
+  <style>
+    :root {
+      --sky-top: #7ec8e3;
+      --sky-mid: #b8dff0;
+      --sky-bottom: #d6eff8;
+      --grass: #4a9e5c;
+      --mountain-dark: #3a6878;
+      --mountain-mid: #5a8fa0;
+      --mountain-light: #7aafc0;
+      --snow: #e8f4f8;
+      --sun: #ffe17a;
+      --card-bg: rgba(255,255,255,0.72);
+      --card-border: rgba(255,255,255,0.9);
+      --text-dark: #1c3a4a;
+      --text-mid: #3a6878;
+      --text-muted: #6a9aaa;
+      --accent: #2e8fbf;
+      --accent-light: #d6eff8;
+      --green: #2e9a55;
+      --green-light: #d4edda;
+      --amber: #c07820;
+      --amber-light: #fff0cc;
+      --red: #c03535;
+      --red-light: #fde8e8;
+      --purple: #6a3a9a;
+      --purple-light: #ede4f8;
+      --teal: #1a8a8a;
+      --teal-light: #d4f0f0;
+      --star: #e0a020;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      min-height: 100vh;
+      overflow-x: hidden;
+      background: var(--sky-top);
+    }
+
+    /* ─── SCENE ─────────────────────────────────────── */
+    .scene {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      overflow: hidden;
+    }
+
+    .sky-gradient {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(180deg, #5ab3d8 0%, #8ecde8 30%, #b8dff0 55%, #d8eecc 80%, #c8e8aa 100%);
+    }
+
+    /* Sun */
+    .sun {
+      position: absolute;
+      top: 5%;
+      right: 10%;
+      width: 72px;
+      height: 72px;
+      border-radius: 50%;
+      background: radial-gradient(circle, #fff5aa 0%, #ffe066 60%, #ffc820 100%);
+      box-shadow: 0 0 0 18px rgba(255,224,100,0.18), 0 0 0 36px rgba(255,224,100,0.08);
+      animation: sunPulse 6s ease-in-out infinite;
+    }
+    @keyframes sunPulse {
+      0%,100% { box-shadow: 0 0 0 18px rgba(255,224,100,0.18),0 0 0 36px rgba(255,224,100,0.08); }
+      50% { box-shadow: 0 0 0 24px rgba(255,224,100,0.22),0 0 0 48px rgba(255,224,100,0.1); }
+    }
+
+    /* Clouds */
+    .cloud { position: absolute; }
+    .cloud-body {
+      position: relative;
+      background: rgba(255,255,255,0.88);
+      border-radius: 60px;
+    }
+    .cloud-body::before, .cloud-body::after {
+      content: '';
+      position: absolute;
+      background: inherit;
+      border-radius: 50%;
+    }
+    .c1 { top: 8%; left: 3%; animation: drift1 28s linear infinite; }
+    .c1 .cloud-body { width: 130px; height: 34px; }
+    .c1 .cloud-body::before { width: 70px; height: 55px; top: -28px; left: 15px; }
+    .c1 .cloud-body::after { width: 50px; height: 42px; top: -20px; left: 60px; }
+
+    .c2 { top: 14%; left: 35%; animation: drift2 36s linear infinite; }
+    .c2 .cloud-body { width: 100px; height: 26px; opacity: 0.75; }
+    .c2 .cloud-body::before { width: 55px; height: 45px; top: -22px; left: 12px; }
+    .c2 .cloud-body::after { width: 40px; height: 34px; top: -16px; left: 48px; }
+
+    .c3 { top: 6%; right: 25%; animation: drift3 42s linear infinite; }
+    .c3 .cloud-body { width: 110px; height: 30px; opacity: 0.8; }
+    .c3 .cloud-body::before { width: 60px; height: 50px; top: -26px; left: 14px; }
+    .c3 .cloud-body::after { width: 45px; height: 38px; top: -18px; left: 55px; }
+
+    .c4 { top: 20%; left: 60%; animation: drift1 50s linear infinite reverse; }
+    .c4 .cloud-body { width: 85px; height: 22px; opacity: 0.65; }
+    .c4 .cloud-body::before { width: 46px; height: 38px; top: -19px; left: 10px; }
+    .c4 .cloud-body::after { width: 35px; height: 30px; top: -14px; left: 42px; }
+
+    @keyframes drift1 { from { transform: translateX(0); } to { transform: translateX(calc(100vw + 200px)); } }
+    @keyframes drift2 { from { transform: translateX(-200px); } to { transform: translateX(calc(100vw + 200px)); } }
+    @keyframes drift3 { from { transform: translateX(100px); } to { transform: translateX(calc(100vw + 300px)); } }
+
+    /* Mountains */
+    .mountains {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 55vh;
+    }
+
+    /* Trees */
+    .trees {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 140px;
+    }
+
+    /* Wind lines */
+    .wind-lines {
+      position: absolute;
+      top: 30%;
+      left: 0;
+      width: 100%;
+      height: 60px;
+      pointer-events: none;
+    }
+    .wind-line {
+      position: absolute;
+      height: 1.5px;
+      border-radius: 2px;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.45), transparent);
+      animation: windMove 4s ease-in-out infinite;
+    }
+    .wind-line:nth-child(1) { width: 80px; top: 10px; left: 5%; animation-delay: 0s; }
+    .wind-line:nth-child(2) { width: 50px; top: 28px; left: 12%; animation-delay: 0.5s; }
+    .wind-line:nth-child(3) { width: 65px; top: 48px; left: 8%; animation-delay: 1s; }
+    .wind-line:nth-child(4) { width: 45px; top: 18px; right: 15%; animation-delay: 1.5s; }
+    .wind-line:nth-child(5) { width: 70px; top: 38px; right: 8%; animation-delay: 2s; }
+    @keyframes windMove {
+      0%   { transform: translateX(0) scaleX(1); opacity: 0; }
+      20%  { opacity: 1; }
+      80%  { opacity: 0.7; }
+      100% { transform: translateX(40px) scaleX(1.3); opacity: 0; }
+    }
+
+    /* Birds */
+    .birds {
+      position: absolute;
+      top: 18%;
+      left: 20%;
+      animation: birdFly 30s linear infinite;
+    }
+    .bird {
+      display: inline-block;
+      width: 12px;
+      height: 5px;
+      border-top: 2px solid rgba(40,80,100,0.45);
+      border-radius: 50% 50% 0 0;
+      margin: 0 4px;
+      animation: birdFlap 0.6s ease-in-out infinite alternate;
+    }
+    .bird:nth-child(2) { animation-delay: 0.2s; margin-top: 6px; }
+    .bird:nth-child(3) { animation-delay: 0.1s; }
+    @keyframes birdFly { from { transform: translateX(0); } to { transform: translateX(60vw); opacity: 0; } }
+    @keyframes birdFlap { from { transform: scaleY(0.7); } to { transform: scaleY(1.3); } }
+
+    /* ─── MAIN LAYOUT ───────────────────────────────── */
+    .page-wrap {
+      position: relative;
+      z-index: 10;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 2rem 1rem 6rem;
+      max-width: 760px;
+      margin: 0 auto;
+    }
+
+    /* ─── HEADER ────────────────────────────────────── */
+    .header {
+      text-align: center;
+      margin-bottom: 1.8rem;
+      animation: fadeDown 0.6s ease-out;
+    }
+    .header-eyebrow {
+      font-size: 0.7rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.85);
+      font-weight: 500;
+      margin-bottom: 0.4rem;
+    }
+    .header h1 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(2.4rem, 6vw, 3.4rem);
+      font-weight: 600;
+      color: #fff;
+      text-shadow: 0 2px 20px rgba(0,80,120,0.3);
+      line-height: 1.1;
+    }
+    .header h1 span { font-style: italic; color: #ffe17a; }
+    .header-sub {
+      font-size: 0.82rem;
+      color: rgba(255,255,255,0.75);
+      margin-top: 0.5rem;
+      font-weight: 300;
+      letter-spacing: 0.05em;
+    }
+    @keyframes fadeDown { from { opacity: 0; transform: translateY(-16px); } to { opacity: 1; transform: translateY(0); } }
+
+    /* ─── STATS ─────────────────────────────────────── */
+    .stats-row {
+      display: flex;
+      gap: 0.6rem;
+      flex-wrap: wrap;
+      justify-content: center;
+      margin-bottom: 1.4rem;
+      animation: fadeUp 0.6s ease-out 0.1s both;
+    }
+    .stat-pill {
+      background: rgba(255,255,255,0.22);
+      backdrop-filter: blur(8px);
+      border: 1px solid rgba(255,255,255,0.38);
+      border-radius: 30px;
+      padding: 0.35rem 0.9rem;
+      display: flex;
+      align-items: center;
+      gap: 0.35rem;
+      font-size: 0.76rem;
+      font-weight: 500;
+      color: #fff;
+      transition: transform 0.2s, background 0.2s;
+    }
+    .stat-pill i { font-size: 14px; opacity: 0.9; }
+    .stat-pill:hover { background: rgba(255,255,255,0.3); transform: translateY(-1px); }
+
+    /* ─── GLASS CARD ────────────────────────────────── */
+    .glass {
+      background: rgba(255,255,255,0.68);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border: 1px solid rgba(255,255,255,0.88);
+      border-radius: 20px;
+    }
+
+    /* ─── ADD FORM ──────────────────────────────────── */
+    .add-form {
+      width: 100%;
+      padding: 1.2rem 1.4rem;
+      margin-bottom: 1rem;
+      animation: fadeUp 0.6s ease-out 0.15s both;
+    }
+    .form-title {
+      font-size: 0.7rem;
+      font-weight: 500;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--text-mid);
+      margin-bottom: 0.8rem;
+    }
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr auto auto auto;
+      gap: 0.6rem;
+      align-items: center;
+    }
+    @media (max-width: 580px) {
+      .form-row { grid-template-columns: 1fr 1fr; }
+      .form-row .name-group { grid-column: 1 / -1; }
+      .form-row .add-btn { grid-column: 1 / -1; }
+    }
+    .form-input, .form-select {
+      height: 40px;
+      background: rgba(255,255,255,0.75);
+      border: 1px solid rgba(180,210,230,0.7);
+      border-radius: 10px;
+      padding: 0 0.85rem;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.88rem;
+      color: var(--text-dark);
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
+      width: 100%;
+    }
+    .form-input:focus, .form-select:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(46,143,191,0.15);
+      background: rgba(255,255,255,0.9);
+    }
+    .form-input::placeholder { color: var(--text-muted); }
+    .form-select { padding-right: 2rem; cursor: pointer; appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%236a9aaa' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 0.7rem center;
+    }
+    .add-btn {
+      height: 40px;
+      padding: 0 1.2rem;
+      background: linear-gradient(135deg, #2e8fbf, #1a6a9f);
+      color: #fff;
+      border: none;
+      border-radius: 10px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.88rem;
+      font-weight: 500;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 0.35rem;
+      white-space: nowrap;
+      transition: transform 0.15s, opacity 0.15s, box-shadow 0.15s;
+      box-shadow: 0 3px 12px rgba(30,100,160,0.3);
+    }
+    .add-btn:hover { transform: translateY(-1px); box-shadow: 0 5px 16px rgba(30,100,160,0.35); }
+    .add-btn:active { transform: scale(0.97); }
+    .add-btn i { font-size: 16px; }
+
+    /* ─── FILTERS ───────────────────────────────────── */
+    .filter-strip {
+      width: 100%;
+      display: flex;
+      gap: 0.4rem;
+      flex-wrap: wrap;
+      margin-bottom: 1rem;
+      animation: fadeUp 0.6s ease-out 0.2s both;
+    }
+    .fbtn {
+      background: rgba(255,255,255,0.5);
+      border: 1px solid rgba(255,255,255,0.75);
+      border-radius: 20px;
+      padding: 0.3rem 0.8rem;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.73rem;
+      font-weight: 500;
+      color: var(--text-dark);
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .fbtn:hover { background: rgba(255,255,255,0.7); }
+    .fbtn.active {
+      background: var(--accent);
+      color: #fff;
+      border-color: transparent;
+      box-shadow: 0 2px 8px rgba(46,143,191,0.35);
+    }
+
+    /* ─── LIST ──────────────────────────────────────── */
+    .list-wrapper {
+      width: 100%;
+      animation: fadeUp 0.6s ease-out 0.25s both;
+    }
+    .section-label {
+      font-size: 0.68rem;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: rgba(255,255,255,0.75);
+      margin: 1rem 0 0.5rem 0.2rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .section-label::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: rgba(255,255,255,0.3);
+    }
+
+    .items-list { display: flex; flex-direction: column; gap: 0.55rem; }
+
+    .item {
+      padding: 0.85rem 1.1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      transition: transform 0.18s, background 0.18s, opacity 0.2s;
+      animation: slideIn 0.25s ease-out;
+      cursor: default;
+    }
+    .item:hover { transform: translateY(-2px); background: rgba(255,255,255,0.8); }
+    .item.completed { opacity: 0.55; }
+    .item.completed .item-name { text-decoration: line-through; color: var(--text-muted); }
+
+    @keyframes slideIn {
+      from { opacity: 0; transform: translateX(-10px); }
+      to   { opacity: 1; transform: translateX(0); }
+    }
+    @keyframes fadeOut {
+      to { opacity: 0; transform: translateX(10px); height: 0; padding: 0; margin: 0; }
+    }
+    .item.removing { animation: fadeOut 0.25s ease-in forwards; }
+
+    /* Priority indicator */
+    .pri-bar {
+      width: 4px;
+      height: 38px;
+      border-radius: 3px;
+      flex-shrink: 0;
+    }
+    .pri-high { background: linear-gradient(180deg, #e05050, #b02020); }
+    .pri-med  { background: linear-gradient(180deg, #e0a030, #b07020); }
+    .pri-low  { background: linear-gradient(180deg, #50b870, #2a8a45); }
+
+    /* Item main */
+    .item-body { flex: 1; min-width: 0; }
+    .item-name {
+      font-size: 0.93rem;
+      font-weight: 500;
+      color: var(--text-dark);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      line-height: 1.3;
+    }
+    .item-meta {
+      display: flex;
+      align-items: center;
+      gap: 0.45rem;
+      margin-top: 0.25rem;
+      flex-wrap: wrap;
+    }
+    .cat-badge {
+      font-size: 0.67rem;
+      font-weight: 500;
+      padding: 0.1rem 0.5rem;
+      border-radius: 20px;
+    }
+    .cat-nature    { background: #d4edda; color: #1a6e35; }
+    .cat-adventure { background: #ffe5d0; color: #8a3a08; }
+    .cat-city      { background: #d1ecf1; color: #0a5060; }
+    .cat-culture   { background: #e2d9f3; color: #52208a; }
+    .cat-food      { background: #fff3cd; color: #7a4a08; }
+    .cat-beach     { background: #cce5ff; color: #0a3a7a; }
+    .pri-label {
+      font-size: 0.67rem;
+      color: var(--text-muted);
+      font-weight: 400;
+    }
+
+    /* Actions */
+    .item-actions {
+      display: flex;
+      align-items: center;
+      gap: 0.2rem;
+      flex-shrink: 0;
+    }
+    .act-btn {
+      width: 32px;
+      height: 32px;
+      border: none;
+      border-radius: 8px;
+      background: transparent;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text-muted);
+      font-size: 16px;
+      transition: all 0.15s;
+    }
+    .act-btn:hover { background: rgba(46,143,191,0.12); color: var(--accent); }
+    .act-btn.star-on { color: var(--star); }
+    .act-btn.done-on { color: var(--green); }
+    .act-btn.del-btn:hover { background: rgba(192,53,53,0.1); color: var(--red); }
+
+    /* ─── EMPTY STATE ───────────────────────────────── */
+    .empty {
+      text-align: center;
+      padding: 3rem 1rem;
+      color: rgba(255,255,255,0.8);
+    }
+    .empty i { font-size: 48px; display: block; margin-bottom: 0.8rem; opacity: 0.6; }
+    .empty p { font-size: 0.9rem; font-weight: 300; }
+
+    /* ─── TOAST ─────────────────────────────────────── */
+    .toast {
+      position: fixed;
+      bottom: 2rem;
+      left: 50%;
+      transform: translateX(-50%) translateY(20px);
+      background: rgba(30,60,80,0.92);
+      color: #fff;
+      font-size: 0.82rem;
+      font-weight: 500;
+      padding: 0.55rem 1.2rem;
+      border-radius: 30px;
+      backdrop-filter: blur(8px);
+      z-index: 100;
+      opacity: 0;
+      transition: opacity 0.25s, transform 0.25s;
+      pointer-events: none;
+      white-space: nowrap;
+    }
+    .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+    /* ─── UTIL ──────────────────────────────────────── */
+    @keyframes fadeUp { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: translateY(0); } }
+
+    /* Scrollbar */
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.35); border-radius: 3px; }
+  </style>
+</head>
+<body>
+
+<!-- ─── SCENE ─────────────────────────────────────────── -->
+<div class="scene" aria-hidden="true">
+  <div class="sky-gradient"></div>
+  <div class="sun"></div>
+
+  <!-- Clouds -->
+  <div class="cloud c1"><div class="cloud-body"></div></div>
+  <div class="cloud c2"><div class="cloud-body"></div></div>
+  <div class="cloud c3"><div class="cloud-body"></div></div>
+  <div class="cloud c4"><div class="cloud-body"></div></div>
+
+  <!-- Wind lines -->
+  <div class="wind-lines">
+    <div class="wind-line"></div><div class="wind-line"></div>
+    <div class="wind-line"></div><div class="wind-line"></div>
+    <div class="wind-line"></div>
+  </div>
+
+  <!-- Birds -->
+  <div class="birds">
+    <div class="bird"></div><div class="bird"></div><div class="bird"></div>
+  </div>
+
+  <!-- Mountains SVG -->
+  <svg class="mountains" viewBox="0 0 1200 420" preserveAspectRatio="xMidYMax slice" xmlns="http://www.w3.org/2000/svg">
+    <!-- Back range -->
+    <polygon points="0,420 0,300 150,110 300,280 420,80 580,260 700,120 850,290 1000,100 1150,260 1200,210 1200,420" fill="#7aafc0" opacity="0.55"/>
+    <!-- Snow caps -->
+    <polygon points="390,140 420,80 450,140" fill="white" opacity="0.7"/>
+    <polygon points="970,130 1000,100 1030,130" fill="white" opacity="0.65"/>
+    <polygon points="130,140 150,110 170,140" fill="white" opacity="0.6"/>
+    <polygon points="680,150 700,120 720,150" fill="white" opacity="0.6"/>
+    <!-- Mid range -->
+    <polygon points="0,420 0,340 100,200 220,330 350,160 500,310 650,190 780,320 900,180 1050,310 1200,240 1200,420" fill="#5a8fa0" opacity="0.7"/>
+    <!-- Snow caps mid -->
+    <polygon points="330,185 350,160 370,185" fill="white" opacity="0.6"/>
+    <polygon points="880,200 900,180 920,200" fill="white" opacity="0.55"/>
+    <!-- Front foothills -->
+    <polygon points="0,420 0,380 80,290 200,370 350,240 480,360 620,270 760,370 900,260 1040,360 1200,300 1200,420" fill="#4a7a95" opacity="0.75"/>
+    <!-- Ground -->
+    <rect x="0" y="390" width="1200" height="30" fill="#4a9e5c" opacity="0.6"/>
+  </svg>
+
+  <!-- Trees SVG -->
+  <svg class="trees" viewBox="0 0 1200 140" preserveAspectRatio="xMidYMax slice" xmlns="http://www.w3.org/2000/svg">
+    <!-- Ground -->
+    <rect x="0" y="110" width="1200" height="30" fill="#3a8a4c"/>
+    <!-- Tree macro -->
+    <g fill="#2e7a3e">
+      <!-- Left cluster -->
+      <polygon points="30,110 50,55 70,110"/><rect x="47" y="95" width="6" height="15" fill="#4a5a30"/>
+      <polygon points="22,110 45,48 68,110"/><rect x="42" y="95" width="6" height="15" fill="#3a4a25"/>
+      <polygon points="70,110 90,62 110,110"/><rect x="87" y="97" width="6" height="13" fill="#4a5a30"/>
+      <polygon points="100,110 118,58 136,110"/><rect x="115" y="96" width="5" height="14" fill="#3a4a25"/>
+      <polygon points="92,110 115,50 138,110"/>
+      <polygon points="140,110 160,65 180,110"/><rect x="157" y="97" width="6" height="13" fill="#4a5a30"/>
+      <polygon points="175,110 196,54 217,110"/><rect x="193" y="95" width="6" height="15" fill="#3a4a25"/>
+      <!-- Mid left -->
+      <polygon points="240,110 262,57 284,110"/><rect x="259" y="96" width="6" height="14" fill="#4a5a30"/>
+      <polygon points="280,110 300,63 320,110"/><rect x="297" y="97" width="5" height="13" fill="#3a4a25"/>
+      <polygon points="318,110 340,52 362,110"/>
+      <!-- Mid right -->
+      <polygon points="830,110 852,58 874,110"/><rect x="849" y="96" width="6" height="14" fill="#4a5a30"/>
+      <polygon points="870,110 890,64 910,110"/>
+      <polygon points="905,110 927,55 949,110"/><rect x="924" y="95" width="6" height="15" fill="#3a4a25"/>
+      <polygon points="945,110 965,62 985,110"/><rect x="962" y="97" width="5" height="13" fill="#4a5a30"/>
+      <!-- Right cluster -->
+      <polygon points="1000,110 1022,56 1044,110"/>
+      <polygon points="1040,110 1062,60 1084,110"/><rect x="1059" y="96" width="6" height="14" fill="#3a4a25"/>
+      <polygon points="1080,110 1100,54 1120,110"/><rect x="1097" y="95" width="6" height="15" fill="#4a5a30"/>
+      <polygon points="1115,110 1138,57 1161,110"/>
+      <polygon points="1155,110 1178,52 1200,110"/>
+    </g>
+    <!-- Lighter green overlay -->
+    <g fill="#3d9a55" opacity="0.6">
+      <polygon points="50,110 68,72 86,110"/>
+      <polygon points="120,110 138,70 156,110"/>
+      <polygon points="180,110 198,74 216,110"/>
+      <polygon points="300,110 318,72 336,110"/>
+      <polygon points="860,110 878,71 896,110"/>
+      <polygon points="960,110 978,69 996,110"/>
+      <polygon points="1050,110 1068,73 1086,110"/>
+      <polygon points="1130,110 1148,70 1166,110"/>
+    </g>
+    <!-- Grass detail -->
+    <rect x="0" y="118" width="1200" height="22" fill="#4ab060" opacity="0.4"/>
+    <rect x="0" y="126" width="1200" height="14" fill="#5ac070" opacity="0.3"/>
+  </svg>
+</div>
+
+<!-- ─── CONTENT ────────────────────────────────────────── -->
+<main class="page-wrap">
+  <h2 class="sr-only">Travel Bucket List — add, manage, and track your dream destinations</h2>
+
+  <header class="header">
+    <p class="header-eyebrow">ME n MINE</p>
+    <h1>Travel <span>Bucket List</span></h1>
+    <p class="header-sub">Adventures waiting to be lived · places left to discover</p>
+  </header>
+
+  <div class="stats-row" id="statsRow" role="region" aria-label="Summary stats"></div>
+
+  <div class="glass add-form" role="form" aria-label="Add new destination">
+    <p class="form-title">Add destination</p>
+    <div class="form-row">
+      <div class="name-group">
+        <input class="form-input" type="text" id="nameInput" placeholder="e.g. Northern Lights in Iceland" aria-label="Destination name" maxlength="80" />
+      </div>
+      <select class="form-select" id="catInput" aria-label="Category">
+        <option value="nature">🌿 Nature</option>
+        <option value="adventure">⛰ Adventure</option>
+        <option value="city">🏙 City</option>
+        <option value="culture">🏛 Culture</option>
+        <option value="beach">🏖 Beach</option>
+        <option value="food">🍜 Food</option>
+      </select>
+      <select class="form-select" id="priInput" aria-label="Priority">
+        <option value="high">🔴 High</option>
+        <option value="med">🟡 Medium</option>
+        <option value="low">🟢 Low</option>
+      </select>
+      <button class="add-btn" onclick="addItem()" aria-label="Add destination">
+        <i class="ti ti-plus" aria-hidden="true"></i> Add
+      </button>
+    </div>
+  </div>
+
+  <div class="filter-strip" id="filterRow" role="toolbar" aria-label="Filter destinations"></div>
+
+  <div class="list-wrapper" id="listWrapper" aria-live="polite"></div>
+</main>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<style>.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}</style>
+
+<script>
+  /* ── Data ──────────────────────────────────────────── */
+  const STORAGE_KEY = 'travel_bucket_v1';
+
+  const defaults = [
+    {id:1,name:"Northern Lights in Iceland",cat:"nature",pri:"high",starred:true,done:false},
+    {id:2,name:"Cherry blossom season in Kyoto",cat:"culture",pri:"high",starred:true,done:false},
+    {id:3,name:"Safari in the Serengeti, Tanzania",cat:"nature",pri:"med",starred:false,done:false},
+    {id:4,name:"Hike the Inca Trail to Machu Picchu",cat:"adventure",pri:"high",starred:false,done:false},
+    {id:5,name:"Street food tour in Bangkok",cat:"food",pri:"med",starred:false,done:false},
+    {id:6,name:"Island-hop the Greek Cyclades",cat:"beach",pri:"med",starred:true,done:true},
+    {id:7,name:"Walk the Camino de Santiago",cat:"adventure",pri:"low",starred:false,done:false},
+    {id:8,name:"Explore the medina of Marrakech",cat:"culture",pri:"med",starred:false,done:false},
+  ];
+
+  function load() {
+    try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || defaults; }
+    catch { return defaults; }
+  }
+  function save() { localStorage.setItem(STORAGE_KEY, JSON.stringify(items)); }
+
+  let items = load();
+  let nextId = Math.max(...items.map(i => i.id), 0) + 1;
+  let activeFilter = 'all';
+
+  const catLabels = {nature:'Nature',adventure:'Adventure',city:'City',culture:'Culture',food:'Food',beach:'Beach'};
+  const priLabels = {high:'High priority',med:'Medium priority',low:'Low priority'};
+  const filters = [
+    {k:'all',l:'All'},
+    {k:'starred',l:'⭐ Starred'},
+    {k:'active',l:'Active'},
+    {k:'done',l:'Completed'},
+    {k:'nature',l:'Nature'},
+    {k:'adventure',l:'Adventure'},
+    {k:'city',l:'City'},
+    {k:'culture',l:'Culture'},
+    {k:'beach',l:'Beach'},
+    {k:'food',l:'Food'},
+  ];
+
+  /* ── CRUD ──────────────────────────────────────────── */
+  function addItem() {
+    const n = document.getElementById('nameInput').value.trim();
+    if (!n) { showToast('Please enter a destination name'); return; }
+    items.unshift({id: nextId++, name: n, cat: document.getElementById('catInput').value, pri: document.getElementById('priInput').value, starred: false, done: false});
+    document.getElementById('nameInput').value = '';
+    save(); render();
+    showToast('Destination added ✈');
+  }
+
+  function toggleStar(id) {
+    const it = items.find(x => x.id === id);
+    if (!it) return;
+    it.starred = !it.starred;
+    save(); render();
+    showToast(it.starred ? 'Added to starred ⭐' : 'Removed from starred');
+  }
+
+  function toggleDone(id) {
+    const it = items.find(x => x.id === id);
+    if (!it) return;
+    it.done = !it.done;
+    save(); render();
+    showToast(it.done ? 'Marked as completed 🎉' : 'Marked as active');
+  }
+
+  function delItem(id) {
+    const el = document.querySelector(`[data-id="${id}"]`);
+    if (el) {
+      el.classList.add('removing');
+      setTimeout(() => { items = items.filter(x => x.id !== id); save(); render(); }, 240);
+    } else {
+      items = items.filter(x => x.id !== id); save(); render();
+    }
+    showToast('Destination removed');
+  }
+
+  /* ── Render ────────────────────────────────────────── */
+  function getFiltered() {
+    if (activeFilter === 'all')     return items;
+    if (activeFilter === 'starred') return items.filter(x => x.starred);
+    if (activeFilter === 'active')  return items.filter(x => !x.done);
+    if (activeFilter === 'done')    return items.filter(x => x.done);
+    return items.filter(x => x.cat === activeFilter);
+  }
+
+  function renderStats() {
+    const total = items.length;
+    const done  = items.filter(x => x.done).length;
+    const starred = items.filter(x => x.starred).length;
+    const hp = items.filter(x => x.pri === 'high' && !x.done).length;
+    document.getElementById('statsRow').innerHTML = `
+      <div class="stat-pill"><i class="ti ti-map-pin" aria-hidden="true"></i>${total} destinations</div>
+      <div class="stat-pill"><i class="ti ti-circle-check" aria-hidden="true"></i>${done} completed</div>
+      <div class="stat-pill"><i class="ti ti-star" aria-hidden="true"></i>${starred} starred</div>
+      <div class="stat-pill"><i class="ti ti-flame" aria-hidden="true"></i>${hp} high priority</div>
+    `;
+  }
+
+  function renderFilters() {
+    document.getElementById('filterRow').innerHTML = filters.map(f =>
+      `<button class="fbtn${activeFilter===f.k?' active':''}" onclick="setFilter('${f.k}')">${f.l}</button>`
+    ).join('');
+  }
+
+  function itemHTML(it) {
+    return `
+      <div class="glass item${it.done?' completed':''}" data-id="${it.id}" role="listitem">
+        <div class="pri-bar pri-${it.pri}" title="${priLabels[it.pri]}" aria-label="${priLabels[it.pri]}"></div>
+        <div class="item-body">
+          <div class="item-name">${escHtml(it.name)}</div>
+          <div class="item-meta">
+            <span class="cat-badge cat-${it.cat}">${catLabels[it.cat]}</span>
+            <span class="pri-label">${priLabels[it.pri]}</span>
+          </div>
+        </div>
+        <div class="item-actions">
+          <button class="act-btn${it.starred?' star-on':''}" onclick="toggleStar(${it.id})" aria-label="${it.starred?'Unstar':'Star'} ${escHtml(it.name)}" title="${it.starred?'Remove star':'Star this'}">
+            <i class="ti ti-star${it.starred?'-filled':''}" aria-hidden="true"></i>
+          </button>
+          <button class="act-btn${it.done?' done-on':''}" onclick="toggleDone(${it.id})" aria-label="${it.done?'Mark incomplete':'Mark complete'}" title="${it.done?'Mark as active':'Mark as done'}">
+            <i class="ti ti-circle-check" aria-hidden="true"></i>
+          </button>
+          <button class="act-btn del-btn" onclick="delItem(${it.id})" aria-label="Delete ${escHtml(it.name)}" title="Delete">
+            <i class="ti ti-trash" aria-hidden="true"></i>
+          </button>
+        </div>
+      </div>`;
+  }
+
+  function renderList() {
+    const filtered = getFiltered();
+    const active = filtered.filter(x => !x.done);
+    const done   = filtered.filter(x => x.done);
+    let html = '';
+
+    if (!filtered.length) {
+      html = `<div class="empty"><i class="ti ti-map-off" aria-hidden="true"></i><p>No destinations here yet. Add one above!</p></div>`;
+    } else {
+      if (active.length) {
+        html += `<div class="section-label">On the list — ${active.length}</div>`;
+        html += `<div class="items-list" role="list">${active.map(itemHTML).join('')}</div>`;
+      }
+      if (done.length) {
+        html += `<div class="section-label" style="margin-top:1.4rem">Completed — ${done.length}</div>`;
+        html += `<div class="items-list" role="list">${done.map(itemHTML).join('')}</div>`;
+      }
+    }
+    document.getElementById('listWrapper').innerHTML = html;
+  }
+
+  function render() { renderStats(); renderFilters(); renderList(); }
+
+  function setFilter(f) { activeFilter = f; render(); }
+
+  /* ── Toast ─────────────────────────────────────────── */
+  let toastTimer;
+  function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => t.classList.remove('show'), 2400);
+  }
+
+  /* ── Helpers ───────────────────────────────────────── */
+  function escHtml(s) {
+    return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+
+  /* ── Enter key on input ───────────────────────────── */
+  document.getElementById('nameInput').addEventListener('keydown', e => { if (e.key === 'Enter') addItem(); });
+
+  /* ── Init ──────────────────────────────────────────── */
+  render();
+</script>
+</body>
+</html>
