@@ -662,6 +662,70 @@
 
 <style>.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}</style>
 
+<!-- Firebase sync module: place your Firebase web config into `firebaseConfig` to enable cross-device sync. If left empty the app uses localStorage only. -->
+<script type="module">
+  // Paste your Firebase config here (or leave with empty values to keep local-only)
+const firebaseConfig = {
+  apiKey: "AIzaSyDXwFpawpkZSkIX4YfYU8r0YDj-1D2VDrc",
+  authDomain: "wishlist-249f3.firebaseapp.com",
+  projectId: "wishlist-249f3",
+  storageBucket: "wishlist-249f3.firebasestorage.app",
+  messagingSenderId: "633299770528",
+  appId: "1:633299770528:web:9a02b2a0e16eb44b393dc5",
+  measurementId: "G-NB669XZC4F"
+};
+
+  try {
+    if (firebaseConfig.apiKey) {
+      const [{ initializeApp }, authMod, fsMod] = await Promise.all([
+        import('https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js'),
+        import('https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js'),
+        import('https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js')
+      ]);
+
+      const app = initializeApp(firebaseConfig);
+      const auth = authMod.getAuth(app);
+      const db = fsMod.getFirestore(app);
+
+      // enable IndexedDB persistence where supported
+      if (fsMod.enableIndexedDbPersistence) fsMod.enableIndexedDbPersistence(db).catch(() => {});
+
+      // sign in anonymously (keeps data per-user) — optional for public/shared lists
+      authMod.signInAnonymously(auth).catch(() => {});
+
+      authMod.onAuthStateChanged(auth, () => { window.dispatchEvent(new Event('firebase-ready')); });
+
+      // Shared global list at `lists/global` so all users see the same data.
+      const sharedRef = fsMod.doc(db, 'lists', 'global');
+
+      window.fetchRemoteItems = async () => {
+        try {
+          const snap = await fsMod.getDoc(sharedRef);
+          return snap.exists() ? (snap.data().items || null) : null;
+        } catch (e) { return null; }
+      };
+
+      window.saveRemoteItems = async (items) => {
+        try { await fsMod.setDoc(sharedRef, { items, updated: fsMod.serverTimestamp() }); } catch (e) {}
+      };
+
+      window.listenSharedList = (cb) => {
+        try {
+          return fsMod.onSnapshot(sharedRef, snap => cb(snap.exists() ? (snap.data().items || []) : []));
+        } catch (e) { return () => {}; }
+      };
+    } else {
+      window.fetchRemoteItems = null;
+      window.saveRemoteItems = null;
+      window.dispatchEvent(new Event('firebase-ready'));
+    }
+  } catch (e) {
+    window.fetchRemoteItems = null;
+    window.saveRemoteItems = null;
+    window.dispatchEvent(new Event('firebase-ready'));
+  }
+</script>
+
 <script>
   /* ── Data ──────────────────────────────────────────── */
   const STORAGE_KEY = 'travel_bucket_v1';
@@ -677,18 +741,42 @@
     {id:8,name:"Explore the medina of Marrakech",cat:"culture",pri:"med",starred:false,done:false},
   ];
 
-  function load() {
+  async function load() {
+    // wait for firebase ready event if module is still initializing
+    if (window.fetchRemoteItems === undefined) {
+      await new Promise(res => window.addEventListener('firebase-ready', res, { once: true }));
+    }
+
+    // try remote first (if available)
+    try {
+      if (typeof window.fetchRemoteItems === 'function') {
+        const remote = await window.fetchRemoteItems();
+        if (Array.isArray(remote) && remote.length) {
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(remote));
+          return remote;
+        }
+      }
+    } catch (e) { /* ignore remote errors */ }
+
+    // fallback to localStorage
     try {
       const data = JSON.parse(localStorage.getItem(STORAGE_KEY));
-      return Array.isArray(data) ? data : [];
-    } catch {
-      return [];
+      if (Array.isArray(data) && data.length) return data;
+    } catch (e) {}
+
+    // final fallback to defaults
+    return JSON.parse(JSON.stringify(defaults));
+  }
+
+  async function save() {
+    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(items)); } catch (e) {}
+    if (typeof window.saveRemoteItems === 'function') {
+      try { await window.saveRemoteItems(items); } catch (e) {}
     }
   }
-  function save() { localStorage.setItem(STORAGE_KEY, JSON.stringify(items)); }
 
-  let items = load();
-  let nextId = Math.max(...items.map(i => i.id), 0) + 1;
+  let items = [];
+  let nextId = 1;
   let activeFilter = 'all';
 
   const catLabels = {nature:'Nature',adventure:'Adventure',city:'City',culture:'Culture',food:'Food',beach:'Beach'};
@@ -840,7 +928,24 @@
   document.getElementById('nameInput').addEventListener('keydown', e => { if (e.key === 'Enter') addItem(); });
 
   /* ── Init ──────────────────────────────────────────── */
-  render();
+  (async function initApp(){
+    items = await load();
+    nextId = Math.max(...items.map(i => i.id), 0) + 1;
+    render();
+
+    // attach real-time listener to shared list so different users see updates
+    if (typeof window.listenSharedList === 'function') {
+      // keep local copy in sync when remote changes
+      window._sharedUnsub = window.listenSharedList(remoteItems => {
+        if (!Array.isArray(remoteItems)) return;
+        // simple replace strategy — remote becomes source of truth
+        items = remoteItems;
+        nextId = Math.max(...items.map(i => i.id), 0) + 1;
+        try { localStorage.setItem(STORAGE_KEY, JSON.stringify(items)); } catch(e) {}
+        render();
+      });
+    }
+  })();
 </script>
 </body>
 </html>
